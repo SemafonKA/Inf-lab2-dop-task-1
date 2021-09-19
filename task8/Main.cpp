@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "convertToHexCode.h"
+#include "convertFromHexCode.h"
 
 using namespace std;
 
@@ -119,6 +120,35 @@ void _toHex() {
 }
 
 void _fromHex() {
+   string input_num;
+   cout << "Input the number: ";
+   cin >> input_num;
+
+   int exponent_length{};
+   int mantissa_length{};
+   bool is_negative = false;
+
+   input_num = int_radix16_to_radix2(input_num);
+
+   switch (input_num.length()) {
+   case 32:
+      exponent_length = 8;
+      mantissa_length = 23;
+      break;
+
+   case 64:
+      exponent_length = 11;
+      mantissa_length = 52;
+      break;
+
+   default:
+      cout << "Wrong length of number." << endl << endl;
+      return;
+   }
+
+   is_negative = input_num[0] == '1';
+   string shifted_exponent = input_num.substr(1, exponent_length);
+   string formatted_mantissa = input_num.substr(1 + exponent_length, mantissa_length);
 }
 
 int menu() {
