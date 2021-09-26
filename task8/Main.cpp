@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "convertToHexCode.h"
+#include <sstream>
 
 using namespace std;
 
@@ -86,6 +87,10 @@ void _toHex() {
       break;
    }
 
+#ifdef OUTPUT
+   cout << "Shifted exponent in radix10 is: " << to_string(normalize.exponent + ((int)pow(2, exponent_length - 1) - 1)) << endl;
+#endif // OUTPUT
+
    // If number is 0.0, then shifted_exponent is full-zero.
    if (normalize.number != "0.0") {
       shifted_exponent = radix10_to_radix2(to_string(normalize.exponent + ((int)pow(2, exponent_length - 1) - 1)));
@@ -144,7 +149,38 @@ int menu() {
 }
 
 int main() {
-   menu();
+   //menu();
+
+   double a;
+   cin >> a;
+
+   bool is_negative = a >= 0 ? false : true;
+   a = abs(a);
+   auto first_part = floor(a);
+   auto second_part = a - first_part;
+   
+   string first_part_binary; //first_part_binary.resize(53); fill_n(first_part_binary.begin(), 53, '0');
+   string second_part_binary; second_part_binary.resize(53); fill_n(second_part_binary.begin(), 53, '0');
+
+   int i = 0;
+   while (a != 0) {
+      if (i != 53) ++i;
+      auto mod = fmod(a, 2.0);
+      a = (a - mod) / 2.0;
+      if (mod == 1.0) {
+         first_part_binary += '1';
+      }
+      else {
+         first_part_binary += '0';
+      }
+      if (i == 53) {
+         first_part_binary = first_part_binary.substr(1);
+      }
+   }
+   reverse(first_part_binary.begin(), first_part_binary.end());
+
+   cout << first_part_binary << endl;
+   //cout << (is_negative ? "- " : "") << first_part << " " << second_part << endl;
 
    return 0;
 }

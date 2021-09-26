@@ -132,3 +132,7 @@ std::string int_radix2_to_radix16(std::string radix2_number) {
    }
    return final_number;
 }
+
+class HexConverter {
+
+};
