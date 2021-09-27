@@ -1,8 +1,9 @@
 #define OUTPUT
 
 #include <iostream>
-#include "convertToHexCode.h"
 #include <sstream>
+#include <typeinfo>
+#include <map>
 
 using namespace std;
 
@@ -36,95 +37,9 @@ Stats _menuChoose() {
    }
 }
 
-void _toHex() {
-   cout <<"You want to convert float number (enter [1]) or double number (enter [2])? : ";
-   int stat = 0;
-   cin >> stat;
+void _toHex() {}
 
-   string input_num;
-   cout << "Input the number: ";
-   cin >> input_num;
-
-   // Get the sign of number
-   bool is_negative = false;
-   if (input_num[0] == '-') {
-      is_negative = true;
-      input_num = input_num.substr(1);
-   }
-
-#ifdef OUTPUT
-   cout << "Module of input number is: " << input_num << endl;
-   cout << "In radix2 system number is: " << radix10_to_radix2(input_num) << endl;
-#endif // OUTPUT
-
-   // Get normalized number with his exponent value (in int type)
-   auto normalize = radix2_get_normalized_form(radix10_to_radix2(input_num)); // Get the normalized number
-   string shifted_exponent = "";
-   string formatted_mantissa = normalize.number.substr(2);  // Remove the "1." part of normalized num
-   int exponent_length{};
-   int mantissa_length{};
-
-#ifdef OUTPUT
-   cout << "Normalized part is: " << normalize.number << endl;
-   cout << "exponent is: " << normalize.exponent << endl;
-#endif // OUTPUT
-
-   switch (stat) {
-   case 1:  // Float numbers
-      exponent_length = 8;
-      mantissa_length = 23;
-      break;
-
-   case 2:  // double numbers
-      exponent_length = 11;
-      mantissa_length = 52;
-      break;
-
-   default:
-      cout << "Wrong number. Choosed the float number" << endl;
-      exponent_length = 8;
-      mantissa_length = 23;
-      break;
-   }
-
-#ifdef OUTPUT
-   cout << "Shifted exponent in radix10 is: " << to_string(normalize.exponent + ((int)pow(2, exponent_length - 1) - 1)) << endl;
-#endif // OUTPUT
-
-   // If number is 0.0, then shifted_exponent is full-zero.
-   if (normalize.number != "0.0") {
-      shifted_exponent = radix10_to_radix2(to_string(normalize.exponent + ((int)pow(2, exponent_length - 1) - 1)));
-   }
-   // add a missing bits
-   for (int i = shifted_exponent.length(); i < exponent_length; ++i) shifted_exponent = "0" + shifted_exponent; 
-
-#ifdef OUTPUT
-   cout << "Final shifted exponent of num is: " << shifted_exponent << endl;
-#endif // OUTPUT
-
-   // if length more than [mantissa_length], trim the string
-   if (formatted_mantissa.length() > mantissa_length) {
-      formatted_mantissa = formatted_mantissa.substr(0, mantissa_length);
-   }
-   // add a missing bits
-   for (int i = formatted_mantissa.length(); i < mantissa_length; ++i) formatted_mantissa += "0";
-
-#ifdef OUTPUT
-   cout << "Final formatted mantissa of num is: " << formatted_mantissa << endl;
-#endif // OUTPUT
-
-   string result_number = is_negative ? "1" : "0";
-   result_number += shifted_exponent + formatted_mantissa;
-   
-#ifdef OUTPUT
-   cout << "Result number in radix2 is: " << result_number << endl;
-#endif // OUTPUT
-
-   cout << "Result number is: " << int_radix2_to_radix16(result_number) << endl << endl;
-}
-
-void _fromHex() {
-}
+void _fromHex() {}
 
 int menu() {
    auto stat = Stats::choose;
@@ -148,39 +63,145 @@ int menu() {
    return 0;
 }
 
-int main() {
-   //menu();
+template<typename T = double>
+class radix10_computer_number {
+   T _decimal_number = 0.0;
+   bool _is_negative = false;
+   string _binary_number = "";
 
-   double a;
-   cin >> a;
+   map<string, string> radix2_to_radix16_map = {
+   {"0000", "0"},
+   {"0001", "1"},
+   {"0010", "2"},
+   {"0011", "3"},
+   {"0100", "4"},
+   {"0101", "5"},
+   {"0110", "6"},
+   {"0111", "7"},
+   {"1000", "8"},
+   {"1001", "9"},
+   {"1010", "A"},
+   {"1011", "B"},
+   {"1100", "C"},
+   {"1101", "D"},
+   {"1110", "E"},
+   {"1111", "F"},
+   };
 
-   bool is_negative = a >= 0 ? false : true;
-   a = abs(a);
-   auto first_part = floor(a);
-   auto second_part = a - first_part;
-   
-   string first_part_binary; //first_part_binary.resize(53); fill_n(first_part_binary.begin(), 53, '0');
-   string second_part_binary; second_part_binary.resize(53); fill_n(second_part_binary.begin(), 53, '0');
+public:
+   radix10_computer_number(T num) : _decimal_number(num) {
+      int mantissa_size = 53;
+      int exponent_size = 11;
 
-   int i = 0;
-   while (a != 0) {
-      if (i != 53) ++i;
-      auto mod = fmod(a, 2.0);
-      a = (a - mod) / 2.0;
-      if (mod == 1.0) {
-         first_part_binary += '1';
+      // Choosing the size of constants by the choosed type
+      if (typeid(T) == typeid(float)) {
+         mantissa_size = 24;
+         exponent_size = 8;
+      }
+      else if (typeid(T) != typeid(double)) throw exception("Wrong data type!");
+
+      // Split the num to some parts
+      _is_negative = num >= 0 ? false : true;
+      T first_part = floor(num);
+      T second_part = num - first_part;
+      string first_part_binary;
+      string second_part_binary;
+
+      // Get the first part of num in radix2
+      int i = 0;
+      while (first_part != 0.0) {
+         // If length is more than [mantissa_size], reduce the string
+         if (i == mantissa_size) {
+            first_part_binary = first_part_binary.substr(1);
+         }
+         if (i != mantissa_size) ++i;
+
+         auto mod = fmod(first_part, 2.0);
+         first_part = (first_part - mod) / 2.0;
+         if (mod == 1.0) {
+            first_part_binary += '1';
+         }
+         else {
+            first_part_binary += '0';
+         }
+      }
+      reverse(first_part_binary.begin(), first_part_binary.end());
+
+      // Calc shift of number, and also move the second part, if first part is empty
+      int shift = 0;
+      if (i == 0) {
+         while (second_part < 1) {
+            --shift;
+            second_part *= 2;
+         }
+         second_part_binary += '1';
+         second_part -= 1;
+         ++i;
       }
       else {
-         first_part_binary += '0';
+         shift = i - 1;
       }
-      if (i == 53) {
-         first_part_binary = first_part_binary.substr(1);
-      }
-   }
-   reverse(first_part_binary.begin(), first_part_binary.end());
+      shift += pow(2, exponent_size - 1) - 1;
 
-   cout << first_part_binary << endl;
-   //cout << (is_negative ? "- " : "") << first_part << " " << second_part << endl;
+      // Translate shift part to binary code
+      string shift_binary = "";
+      for (int i = 0; i < exponent_size; ++i) {
+         auto mod = shift % 2;
+         shift /= 2.0;
+         if (mod == 1) {
+            shift_binary += '1';
+         }
+         else {
+            shift_binary += '0';
+         }
+      }
+      reverse(shift_binary.begin(), shift_binary.end());
+
+      // Get the second part in radix2, while we got [mantissa_size]
+      while (i++ < mantissa_size) {
+         second_part *= 2.0;
+
+         if (floor(second_part) == 1.0) {
+            second_part_binary += '1';
+            second_part -= 1;
+         }
+         else {
+            second_part_binary += '0';
+         }
+      }
+
+      // Finally, radix2 num
+      _binary_number = (_is_negative ? '1' : '0') + shift_binary + (first_part_binary + second_part_binary).substr(1);
+   }
+
+   T to_decimal() {
+      return _decimal_number;
+   }
+
+   string to_binary() {
+      return _binary_number;
+   }
+
+   string to_hex() {
+      string final_number = "";
+      for (int i = 0; i < _binary_number.length(); i += 4) {
+         final_number += radix2_to_radix16_map.find(_binary_number.substr(i, 4))->second;
+      }
+      return final_number;
+   }
+
+   bool is_negative() {
+      return _is_negative;
+   }
+};
+
+int main() {
+   //menu();
+   double eee;
+   cin >> eee;
+
+   radix10_computer_number<double> a(eee);
+   cout << a.to_decimal() << endl << a.to_hex() << endl;
 
    return 0;
 }
