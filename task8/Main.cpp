@@ -113,12 +113,23 @@ int menu() {
    return 0;
 }
 
+string hex_to_binary(string input) {
+   string output;
+   for (const auto elem : input) {
+      output += radix16_to_radix2_map.find(to_string(elem))->second;
+   }
+}
+
 int main() {
    //menu();
-   string str;
-   cin >> str;
+   string inp;
+   cin >> inp;
 
+   string b_inp = hex_to_binary(inp);
 
+   bool is_negative = b_inp[0] == '1' ? true : false;
+   // Check to primitive states : nan, inf, zeros
+   // else try to parse num back
 
    return 0;
 }
