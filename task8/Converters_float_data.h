@@ -23,8 +23,6 @@ const std::map<std::string, std::string> radix10_computer_number<float>::radix2_
 
 const std::string radix10_computer_number<float>::_plusInf  { "01111111100000000000000000000000" };
 const std::string radix10_computer_number<float>::_minusInf { "11111111100000000000000000000000" };
-const std::string radix10_computer_number<float>::_plusZero { "00000000000000000000000000000000" };
-const std::string radix10_computer_number<float>::_minusZero{ "10000000000000000000000000000000" };
 const std::string radix10_computer_number<float>::_NAN{ "10000000000000000000000000000000" };
 
 const int radix10_computer_number<float>::mantissa_size = 24;

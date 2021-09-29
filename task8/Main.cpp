@@ -6,6 +6,19 @@
 
 using namespace std;
 
+double accurate_double_parcer(string input) {
+   for (auto& elem : input) {
+      if (elem == ',') {
+         elem = '.';
+      }
+      else if (elem != '.' && elem != '-' && elem != '+' && elem != 'e' && (elem < '0' || elem > '9')) {
+         return NAN;
+      }
+   }
+
+   return atof(input.c_str());
+}
+
 // Enumeration for state of menu
 enum class Stats {
    complete,
@@ -36,7 +49,45 @@ Stats _menuChoose() {
    }
 }
 
-void _toHex() {}
+void _toHex() {
+   int type{ 0 };
+   string num;
+   double d_num;
+
+   cout << "Input number:" << endl
+      << "> ";
+   cin >> num;
+   cout << endl;
+   d_num = accurate_double_parcer(num);
+
+   cout << "Enter type of translation ([1] to float, [2] to double):" << endl
+      << "> ";
+   cin >> type;
+   switch (type)
+   {
+   case 1:  // float case
+   {
+      radix10_computer_number<float> result(d_num);
+      cout << "Number in radix2-system is: " << result.to_binary() << endl
+         << "Number in radix16-system is: " << result.to_hex() << endl << endl;
+   }
+   break;
+
+   case 2:  // Double case
+   {
+      radix10_computer_number<double> result(d_num);
+      cout << "Number in radix2-system is: " << result.to_binary() << endl
+         << "Number in radix16-system is: " << result.to_hex() << endl << endl;
+
+   }
+   break;
+
+   default:
+      cout << "Wrong input." << endl << endl;
+      break;
+   }
+
+}
 
 void _fromHex() {}
 
@@ -62,28 +113,12 @@ int menu() {
    return 0;
 }
 
-double accurate_double_parcer(string input) {
-   for (auto& elem : input) {
-      if (elem == ',') {
-         elem = '.';
-      }
-      else if (elem != '.' && elem != '-' && elem != '+' && elem != 'e' && (elem < '0' || elem > '9')) {
-         return NAN;
-      }
-   }
-
-   return atof(input.c_str());
-}
-
 int main() {
    //menu();
-   string ee;
-   cin >> ee;
+   string str;
+   cin >> str;
 
-   double eee = accurate_double_parcer(ee);
 
-   radix10_computer_number<double> a(eee);
-   cout << a.to_binary() << endl << a.to_hex() << endl;
 
    return 0;
 }
