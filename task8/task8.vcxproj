@@ -145,8 +145,6 @@
     <ClInclude Include="Converters.h" />
     <ClInclude Include="Converters_double_data.h" />
     <ClInclude Include="Converters_float_data.h" />
-    <ClInclude Include="convertFromHexCode.h" />
-    <ClInclude Include="convertToHexCode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
