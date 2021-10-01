@@ -1,6 +1,7 @@
 #define OUTPUT
 
 #include <iostream>
+#include <string>
 #include "Converters_double_data.h"
 #include "Converters_float_data.h"
 
@@ -114,10 +115,12 @@ int menu() {
 }
 
 string hex_to_binary(string input) {
-   string output;
-   for (const auto elem : input) {
-      output += radix16_to_radix2_map.find(to_string(elem))->second;
+   string output = "";
+   for (auto elem : input) {
+      output += radix16_to_radix2_map.find(string(1, toupper(elem)))->second;
    }
+
+   return output;
 }
 
 int main() {
@@ -125,11 +128,46 @@ int main() {
    string inp;
    cin >> inp;
 
-   string b_inp = hex_to_binary(inp);
+   string double_inf_nan_exponent = "11111111111";
+   string double_zero_exponent    = "00000000000";
 
-   bool is_negative = b_inp[0] == '1' ? true : false;
-   // Check to primitive states : nan, inf, zeros
-   // else try to parse num back
+   string str_binary_input = hex_to_binary(inp);
+   double final_value = 0;
+
+   bool is_negative = str_binary_input[0] == '1' ? true : false;
+   str_binary_input = str_binary_input.substr(1);
+   
+   string str_exponent = str_binary_input.substr(0, 11);
+   if (str_exponent == double_inf_nan_exponent) {
+      if (str_binary_input.substr(12).find('1') != string::npos) {
+         final_value = NAN;
+      }
+      else {
+         final_value = is_negative ? -INFINITY : INFINITY;
+      }
+   }
+   else {
+      int shifted_int_exp = 0;
+      for (int i = str_exponent.size() - 1; i >= 0; --i) {
+         if (str_exponent[i] == '1') {
+            shifted_int_exp += pow(2, str_exponent.size() - i - 1);
+         }
+      }
+      //cout << "Shifted exponent: " << shifted_int_exp << endl;
+      int int_exp = shifted_int_exp - pow(2, str_exponent.size() - 1) + 1;
+
+      //cout << "Exponent: " << int_exp << endl;
+
+      string str_mantissa = (-int_exp == (pow(2, str_exponent.size() - 1) - 1) ? "0" : "1") + str_binary_input.substr(11);
+      for (int i = str_mantissa.size() - 1; i >= 0; --i) {
+         if (str_mantissa[i] == '1') {
+            final_value += pow(2, str_mantissa.size() - i - 1);
+         }
+      }
+      final_value *= pow(2, int_exp - 52) * (is_negative ? -1 : 1);
+   }
+
+   cout << "Final value: " << std::scientific << final_value << endl;
 
    return 0;
 }
