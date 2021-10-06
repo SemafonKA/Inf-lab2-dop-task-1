@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -146,6 +146,9 @@
     <ClInclude Include="Converters_fromRadix10.h" />
     <ClInclude Include="Converters_fromRadix10_double.h" />
     <ClInclude Include="Converters_fromRadix10_float.h" />
+    <ClInclude Include="Converters_machinery.h" />
+    <ClInclude Include="Converters_machinery_double.h" />
+    <ClInclude Include="Converters_machinery_float.h" />
     <ClInclude Include="Converters_toRadix10.h" />
     <ClInclude Include="Converters_toRadix10_double.h" />
     <ClInclude Include="Converters_toRadix10_float.h" />

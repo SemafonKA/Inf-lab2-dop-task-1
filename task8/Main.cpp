@@ -2,10 +2,8 @@
 
 #include <iostream>
 #include <string>
-#include "Converters_fromRadix10_double.h"
-#include "Converters_fromRadix10_float.h"
-#include "Converters_toRadix10_double.h"
-#include "Converters_toRadix10_float.h"
+#include "Converters_machinery_double.h"
+#include "Converters_machinery_float.h"
 
 using namespace std;
 
@@ -70,7 +68,7 @@ void _toHex() {
    {
    case 1:  // float case
    {
-      Converters::radix10_computer_number<float> result(d_num);
+      Converters::computer_radix10_number<float> result(d_num);
       cout << "Number in radix2-system is: " << result.to_binary() << endl
          << "Number in radix16-system is: " << result.to_hex() << endl << endl;
    }
@@ -78,10 +76,9 @@ void _toHex() {
 
    case 2:  // Double case
    {
-      Converters::radix10_computer_number<double> result(d_num);
+      Converters::computer_radix10_number<double> result(d_num);
       cout << "Number in radix2-system is: " << result.to_binary() << endl
          << "Number in radix16-system is: " << result.to_hex() << endl << endl;
-
    }
    break;
 
@@ -128,7 +125,6 @@ int menu() {
 
 int main() {
    menu();
-
 
    return 0;
 }
