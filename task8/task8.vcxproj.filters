@@ -20,13 +20,25 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Converters.h">
+    <ClInclude Include="Converters_fromRadix10_float.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Converters_double_data.h">
+    <ClInclude Include="Converters_fromRadix10.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Converters_float_data.h">
+    <ClInclude Include="Converters_fromRadix10_double.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Converters_toRadix10.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Converters_binary-hex.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Converters_toRadix10_float.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Converters_toRadix10_double.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

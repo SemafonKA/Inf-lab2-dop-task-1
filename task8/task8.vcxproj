@@ -142,9 +142,13 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Converters.h" />
-    <ClInclude Include="Converters_double_data.h" />
-    <ClInclude Include="Converters_float_data.h" />
+    <ClInclude Include="Converters_binary-hex.h" />
+    <ClInclude Include="Converters_fromRadix10.h" />
+    <ClInclude Include="Converters_fromRadix10_double.h" />
+    <ClInclude Include="Converters_fromRadix10_float.h" />
+    <ClInclude Include="Converters_toRadix10.h" />
+    <ClInclude Include="Converters_toRadix10_double.h" />
+    <ClInclude Include="Converters_toRadix10_float.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
