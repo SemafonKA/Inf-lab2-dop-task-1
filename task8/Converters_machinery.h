@@ -23,21 +23,13 @@ namespace Converters {
       static const int exponent_size;
       static const int mantissa_size;
 
-      T _translate_to_decimal(std::string computer_num) {
-         if ((computer_num.size() != sizeof(T) * 2) && (computer_num.size() != sizeof(T) * 8)) {
-            std::string err = std::string("Error: wrong length of computer number: length is ") + std::to_string(computer_num.size());
+      T _translate_to_decimal(std::string hex_number) {
+         if (hex_number.size() != sizeof(T) * 2) {
+            std::string err = std::string("Error: wrong length of computer number: length is ") + std::to_string(hex_number.size());
             throw std::exception(err.c_str());
          }
 
-         std::string binary_number = "";
-         if (computer_num.size() == sizeof(T) * 8) {
-            binary_number = computer_num;
-            _hex_number = binary_to_hex(binary_number);
-         }
-         else {
-            _hex_number = computer_num;
-            binary_number = hex_to_binary(_hex_number);
-         }
+         std::string binary_number = hex_to_binary(hex_number);
 
          _is_negative = binary_number[0] == '1' ? true : false;
          binary_number = binary_number.substr(1);
@@ -109,7 +101,7 @@ namespace Converters {
                   }
                   if (i != mantissa_size) ++i;
 
-                  auto mod = std::fmod(first_part, 2.0);
+                  double mod = std::fmod(first_part, 2.0);
                   first_part = (first_part - mod) / 2.0;
                   if (mod == 1.0) {
                      first_part_binary += '1';
@@ -138,7 +130,7 @@ namespace Converters {
                // Translate shift part to binary code
                std::string shift_binary = "";
                for (int i = 0; i < exponent_size; ++i) {
-                  auto mod = shift % 2;
+                  int mod = shift % 2;
                   shift /= 2;
                   if (mod == 1) {
                      shift_binary += '1';
@@ -171,13 +163,6 @@ namespace Converters {
       }
 
    public:
-      /// <summary>
-      /// Constructor for machinery num from computer format
-      /// </summary>
-      /// <param name="computer_num"> - string with hex or binary formatted number</param>
-      computer_radix10_number(std::string computer_num) {
-         _translate_to_decimal(computer_num);
-      }
 
       /// <summary>
       /// Default constructor
@@ -185,12 +170,90 @@ namespace Converters {
       computer_radix10_number(void) {}
 
       /// <summary>
+      /// Constructor for machinery num from computer format
+      /// </summary>
+      /// <param name="computer_num"> - string with hex or binary formatted number</param>
+      computer_radix10_number(const std::string& computer_num) {
+         *this = computer_num;
+      }
+
+      /// <summary>
       /// Constructor for machinery num from decimal format
       /// </summary>
       /// <param name="decimal_num"> - number in decimal format</param>
-      computer_radix10_number(T decimal_num) {
+      computer_radix10_number(const T decimal_num) {
+         *this = decimal_num;
+      }
+
+      /// <summary>
+      /// Operator for initialise new number from hex or binary format
+      /// </summary>
+      /// <param name="computer_num"> - string with hex or binary formatted number</param>
+      computer_radix10_number<T>& operator= (const std::string& computer_num) {
+         if (is_float_double_hex(computer_num)) {
+            _hex_number = computer_num;
+         }
+         else {
+            _hex_number = binary_to_hex(computer_num);
+         }
+
+         _decimal_number = _translate_to_decimal(computer_num);
+
+         return *this;
+      }
+
+      /// <summary>
+      /// Operator for initialise new number from decimal format
+      /// </summary>
+      /// <param name="computer_num"> - string in decimal format</param>
+      computer_radix10_number<T>& operator= (const T decimal_num) {
          _decimal_number = decimal_num;
          _translate_to_hex(decimal_num);
+
+         return *this;
+      }
+
+      computer_radix10_number<T> operator= (const computer_radix10_number<T>& _right) {
+         computer_radix10_number<T> new_num;
+         new_num._hex_number = _right._hex_number;
+         new_num._decimal_number = _right._decimal_number;
+         new_num._is_negative = _right._is_negative;
+      }
+
+      bool operator== (const computer_radix10_number<T>& _right) const {
+         return _decimal_number == _right._decimal_number;
+      }
+
+      bool operator< (const computer_radix10_number<T>& _right) const {
+         return _decimal_number < _right._decimal_number;
+      }
+
+      bool operator> (const computer_radix10_number<T>& _right) const {
+         return _decimal_number > _right._decimal_number;
+      }
+
+      bool operator<= (const computer_radix10_number<T>& _right) const {
+         return _decimal_number <= _right._decimal_number;
+      }
+
+      bool operator>= (const computer_radix10_number<T>& _right) const {
+         return _decimal_number >= _right._decimal_number;
+      }
+
+      computer_radix10_number<T> operator+ (const computer_radix10_number<T>& _right) const {
+         return computer_radix10_number<T> (this->_decimal_number + _right._decimal_number);
+      }      
+      
+      computer_radix10_number<T> operator- (const computer_radix10_number<T>& _right) const {
+         return computer_radix10_number<T> (this->_decimal_number - _right._decimal_number);
+      }      
+      
+      computer_radix10_number<T> operator* (const computer_radix10_number<T>& _right) const {
+         return computer_radix10_number<T> (this->_decimal_number * _right._decimal_number);
+      }      
+      
+      computer_radix10_number<T> operator/ (const computer_radix10_number<T>& _right) const {
+         return computer_radix10_number<T> (this->_decimal_number / _right._decimal_number);
       }
 
       /// <summary>
@@ -201,17 +264,17 @@ namespace Converters {
       }
 
       /// <summary>
-      /// Get the decimal-formatted number in [T]
-      /// </summary>
-      T to_decimal() {
-         return _decimal_number;
-      }
-
-      /// <summary>
       /// Get the hex-formatted number in [std::string]
       /// </summary>
       std::string to_hex() {
          return _hex_number;
+      }
+
+      /// <summary>
+      /// Get the decimal-formatted number in [T]
+      /// </summary>
+      T to_decimal() {
+         return _decimal_number;
       }
 
       /// <summary>

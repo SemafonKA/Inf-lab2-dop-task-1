@@ -64,4 +64,10 @@ namespace Converters
       return binary_number;
    }
 
+   bool is_float_double_hex(std::string number) {
+      if (number.size() % 8 <= 1) {
+         return true;
+      }
+   }
+
 }

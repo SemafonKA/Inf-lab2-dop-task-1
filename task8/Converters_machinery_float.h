@@ -11,5 +11,5 @@ namespace Converters
    const std::string computer_radix10_number<float>::_NAN{ "10000000000000000000000000000000" };
 
    const int computer_radix10_number<float>::exponent_size = 8;
-   const int computer_radix10_number<float>::mantissa_size = 23;
+   const int computer_radix10_number<float>::mantissa_size = 24;
 }

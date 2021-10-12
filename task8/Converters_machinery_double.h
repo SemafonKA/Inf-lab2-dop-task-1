@@ -11,5 +11,5 @@ namespace Converters
    const std::string computer_radix10_number<double>::_NAN{ "0111111110000000000000000000000000000000000000000000000000000001" };
 
    const int computer_radix10_number<double>::exponent_size = 11;
-   const int computer_radix10_number<double>::mantissa_size = 52;
+   const int computer_radix10_number<double>::mantissa_size = 53;
 }
