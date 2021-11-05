@@ -15,16 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="Standart_unit_tests.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Converters_binary-hex.h">
+    <ClInclude Include="pch.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Converters_machinery.h">
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Standart_unit_tests.pch">
       <Filter>Файлы заголовков</Filter>
-    </ClInclude>
+    </None>
   </ItemGroup>
 </Project>

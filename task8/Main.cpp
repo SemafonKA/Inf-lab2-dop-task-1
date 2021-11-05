@@ -1,18 +1,19 @@
-#define OUTPUT
-
 #include <iostream>
 #include <string>
-#include "Converters_machinery_double.h"
-#include "Converters_machinery_float.h"
+#include "Converters_machinery.h"
 
 using namespace std;
 
-double accurate_double_parcer(string input) {
-   for (auto& elem : input) {
-      if (elem == ',') {
+double accurate_double_parcer(string input)
+{
+   for (auto& elem : input)
+   {
+      if (elem == ',')
+      {
          elem = '.';
       }
-      else if (elem != '.' && elem != '-' && elem != '+' && elem != 'e' && (elem < '0' || elem > '9')) {
+      else if (elem != '.' && elem != '-' && elem != '+' && elem != 'e' && (elem < '0' || elem > '9'))
+      {
          return NAN;
       }
    }
@@ -21,15 +22,17 @@ double accurate_double_parcer(string input) {
 }
 
 // Enumeration for state of menu
-enum class Stats {
+enum class stats
+{
    complete,
    choose,
-   toHex,
-   fromHex,
+   to_hex,
+   from_hex,
 };
 
-Stats _menuChoose() {
-   cout << "What you want to do:" << endl 
+stats _menuChoose()
+{
+   cout << "What you want to do:" << endl
       << " float/double to computer hexadecimal (enter [1])" << endl
       << " or computer hexadecimal to float/double (enter [2])?" << endl
       << " (Enter [0] for exit)" << endl << "> ";
@@ -37,21 +40,23 @@ Stats _menuChoose() {
    cin >> input;
    cout << endl;
 
-   switch (input) {
+   switch (input)
+   {
    case 0:
-      return Stats::complete;
+      return stats::complete;
    case 1:
-      return Stats::toHex;
+      return stats::to_hex;
    case 2:
-      return Stats::fromHex;
+      return stats::from_hex;
    default:
       cout << "Incorrect input" << endl;
-      return Stats::choose;
+      return stats::choose;
    }
 }
 
-void _toHex() {
-   int type{ 0 };
+void _toHex()
+{
+   int type { 0 };
    string num;
    double d_num;
 
@@ -64,11 +69,12 @@ void _toHex() {
    cout << "Enter type of translation ([1] to float, [2] to double):" << endl
       << "> ";
    cin >> type;
+
    switch (type)
    {
    case 1:  // float case
    {
-      Converters::computer_radix10_number<float> result(d_num);
+      converters::computer_radix10_number<float> result(d_num);
       cout << "Number in radix2-system is: " << result.to_binary() << endl
          << "Number in radix16-system is: " << result.to_hex() << endl << endl;
    }
@@ -76,46 +82,60 @@ void _toHex() {
 
    case 2:  // Double case
    {
-      Converters::computer_radix10_number<double> result(d_num);
+      converters::computer_radix10_number<double> result(d_num);
       cout << "Number in radix2-system is: " << result.to_binary() << endl
          << "Number in radix16-system is: " << result.to_hex() << endl << endl;
    }
    break;
 
    default:
+   {
       cout << "Wrong input." << endl << endl;
-      break;
+   }
+   break;
    }
 
 }
 
-void _fromHex() {
+void _fromHex()
+{
 
    string inp;
    cout << "Input the value in computer form:" << endl
       << "> ";
    cin >> inp;
 
-   Converters::computer_radix10_number<double> value(inp);
-
-   cout << "Final value: " << std::scientific << value.to_decimal() << endl;
+   if (inp.length() == 16 /*Length of double*/)
+   {
+      converters::computer_radix10_number<double> value(inp);
+      cout << "Final value: " << std::scientific << value.to_decimal() << endl;
+   }
+   else
+   {
+      converters::computer_radix10_number<float> value(inp);
+      cout << "Final value: " << std::scientific << value.to_decimal() << endl;
+   }
+   cout << std::defaultfloat << endl;
 }
 
-int menu() {
-   auto stat = Stats::choose;
+int menu()
+{
+   auto stat = stats::choose;
 
-   while (stat != Stats::complete) {
-      switch (stat) {
-      case Stats::choose:
+   while (stat != stats::complete)
+   {
+      switch (stat)
+      {
+      case stats::choose:
          stat = _menuChoose();
          break;
-      case Stats::toHex:
+      case stats::to_hex:
          _toHex();
-         stat = Stats::choose;
+         stat = stats::choose;
          break;
-      case Stats::fromHex:
+      case stats::from_hex:
          _fromHex();
-         stat = Stats::choose;
+         stat = stats::choose;
          break;
       }
    }
@@ -123,8 +143,15 @@ int menu() {
    return 0;
 }
 
-int main() {
-   menu();
-
+int main()
+{
+   try
+   {
+      menu();
+   }
+   catch (std::exception e)
+   {
+      cout << e.what() << endl;
+   }
    return 0;
 }

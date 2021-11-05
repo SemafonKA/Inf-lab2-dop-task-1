@@ -3,7 +3,7 @@
 #include <string>
 #include <map>
 
-namespace Converters
+namespace converters
 {
    const std::map<std::string, std::string> radix2_to_radix16_map = {
       {"0000", "0"},
@@ -43,31 +43,37 @@ namespace Converters
       {"F", "1111"},
    };
 
-   std::string binary_to_hex(std::string binary_number) {
-      while (binary_number.size() % 4 != 0) {
-         binary_number = '0' + binary_number;
-      }
+   inline std::string binary_to_hex(std::string binary_number)
+   {
+      if (binary_number.size() % 4 != 0)
+         binary_number = std::string(4 - binary_number.size() % 4, '0') + binary_number;
 
-      std::string hex_number = "";
-      for (int i = 0; i < binary_number.size(); i += 4) {
+      std::string hex_number;
+      for (int i = 0; i < binary_number.size(); i += 4)
+      {
          hex_number += radix2_to_radix16_map.find(binary_number.substr(i, 4))->second;
       }
       return hex_number;
    }
 
-   std::string hex_to_binary (std::string hex_number) {
-      std::string binary_number = "";
-      for (auto elem : hex_number) {
+   inline std::string hex_to_binary(const std::string& hex_number)
+   {
+      std::string binary_number;
+      for (const auto elem : hex_number)
+      {
          binary_number += radix16_to_radix2_map.find(std::string(1, toupper(elem)))->second;
       }
 
       return binary_number;
    }
 
-   bool is_float_double_hex(std::string number) {
-      if (number.size() % 8 <= 1) {
+   inline bool is_float_double_hex(const std::string& number)
+   {
+      if (number.size() % 8 <= 1)
+      {
          return true;
       }
+      return false;
    }
 
 }
